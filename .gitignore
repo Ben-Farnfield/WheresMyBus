@@ -8,3 +8,6 @@ bin/
 .settings/
 .project
 .classpath
+
+# exclude lib
+lib/
