@@ -1,0 +1,10 @@
+# exclude binary files
+bin/
+
+# exclude temp files
+*~
+
+# exclude Eclipse files
+.settings/
+.project
+.classpath
