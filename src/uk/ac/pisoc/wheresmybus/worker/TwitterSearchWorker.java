@@ -26,7 +26,7 @@ public class TwitterSearchWorker extends Worker {
 		
 		super(bq, twitter);
 		
-		tweetCache = new ArrayList<>();
+		tweetCache = new ArrayList<>(); //TODO purge old tweets
 		twitterQuery = new Query(query);
 	}
 	
@@ -35,11 +35,9 @@ public class TwitterSearchWorker extends Worker {
 		super.run();
 		
 		for (;;) {
-			
 			Logger.log(TAG, "searching twitter ...");
 			
 			try {
-				
 				queryResult = twitter.search(twitterQuery);		
 				List<Status> tweets = queryResult.getTweets();
 				
@@ -48,7 +46,6 @@ public class TwitterSearchWorker extends Worker {
 					if (tweet.getGeoLocation() != null) {
 						// Check we've not seen this tweet before.
 						if (! tweetCache.contains(tweet)) {
-							
 							tweetCache.add(tweet);
 							bq.put(new HashtagTweet(tweet));
 							Logger.log(TAG, "found tweet from: @" 
