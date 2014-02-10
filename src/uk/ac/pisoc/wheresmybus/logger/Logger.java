@@ -6,6 +6,6 @@ public class Logger {
 
 	public static void log(String tag, String msg) {
 		
-		System.out.println("[" + tag + "] [" + new Date() + "] " + msg);
+		System.out.println("[" + new Date() + "] [" + tag + "] " + msg);
 	}
 }
