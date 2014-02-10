@@ -6,11 +6,14 @@ import java.util.concurrent.BlockingQueue;
 
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
+import uk.ac.pisoc.wheresmybus.logger.Logger;
 import uk.ac.pisoc.wheresmybus.model.HashtagTweet;
 import uk.ac.pisoc.wheresmybus.worker.TweetProcWorker;
 import uk.ac.pisoc.wheresmybus.worker.TwitterSearchWorker;
 
 public class WheresMyBusServer {
+	
+	private static final String TAG = "WheresMyBusServer";
 	
 	private BlockingQueue<HashtagTweet> bq;
 	private Twitter twitter;
@@ -37,7 +40,10 @@ public class WheresMyBusServer {
 			tweetProcWorkers.add(new TweetProcWorker(bq, twitter));
 		}
 		
-		twitterSearchWorker = new TwitterSearchWorker(bq, twitter);
+		twitterSearchWorker = new TwitterSearchWorker(
+				bq, twitter, TwitterSearchWorker.TEST_QUERY);
+		
+		Logger.log(TAG, "server created.");
 	}
 	
 	public void start() {
@@ -47,5 +53,7 @@ public class WheresMyBusServer {
 		}
 		
 		twitterSearchWorker.start();
+		
+		Logger.log(TAG, "server started.");
 	}
 }
