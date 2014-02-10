@@ -26,7 +26,7 @@ public class TweetProcWorker extends Worker {
 			try {
 				Logger.log(TAG, getName() + " waiting for job.");
 				HashtagTweet tweet = bq.take();
-				Logger.log(TAG, getName() + " working on job.");
+				Logger.log(TAG, getName() + " starting job ...");
 				
 				// Stride data stuff here
 			
