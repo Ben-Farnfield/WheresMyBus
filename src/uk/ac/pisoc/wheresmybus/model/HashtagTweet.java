@@ -13,12 +13,12 @@ public class HashtagTweet {
 	private double  lat;
 
 	public HashtagTweet(Status tweet) {
-		userName        = "@" + tweet.getUser().getName();
+		userName        = "@" + tweet.getUser().getScreenName();
 		replyToStatusId = tweet.getInReplyToStatusId();
 		lon             = tweet.getGeoLocation().getLongitude();
 		lat             = tweet.getGeoLocation().getLatitude();
 		
-		Logger.log(TAG, "hashtag tweet created.");
+		Logger.log(TAG, "HashtagTweet created.");
 	}
 	
 	public String getLonLat() {

@@ -21,10 +21,10 @@ public class TwitterSearchWorker extends Worker {
 	private Query        twitterQuery;
 	private QueryResult  queryResult;
 		
-	public TwitterSearchWorker(
-			BlockingQueue<HashtagTweet> bq, Twitter twitter, String query) {
+	public TwitterSearchWorker(BlockingQueue<HashtagTweet> bq, Twitter twitter,
+			String threadName, String query) {
 		
-		super(bq, twitter);
+		super(bq, twitter, threadName);
 		
 		tweetCache = new ArrayList<>(); //TODO purge old tweets
 		twitterQuery = new Query(query);
@@ -42,7 +42,7 @@ public class TwitterSearchWorker extends Worker {
 				tweetCache.add(tweet);
 			}
 		}
-		Logger.log(TAG, "tweetCache loaded with old tweets.");
+		Logger.log(TAG, "cache loaded with old tweets.");
 
 		// Search for new tweets
 		for (;;) {
@@ -56,19 +56,17 @@ public class TwitterSearchWorker extends Worker {
 					if (tweet.getGeoLocation() != null) {
 						// Check we've not seen this tweet before.
 						if (! tweetCache.contains(tweet)) {
+							Logger.log(TAG, "found tweet from: @" 
+					                + tweet.getUser().getScreenName());
 							tweetCache.add(tweet);
 							bq.put(new HashtagTweet(tweet));
-							Logger.log(TAG, "found tweet from: @" 
-							                + tweet.getUser().getName());
 						}
 					}
 				}
 				
 				sleep(8000l); // Wait 8 seconds (5 is the min we could set).
 
-			} catch (InterruptedException e) {
-				// do nothing
-			}
+			} catch (InterruptedException e) {}
 		}
 	}
 	

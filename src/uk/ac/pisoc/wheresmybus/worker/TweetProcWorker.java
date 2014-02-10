@@ -12,8 +12,10 @@ public class TweetProcWorker extends Worker {
 	
 	private static final String TAG = "TweetProcWorker";
 
-	public TweetProcWorker(BlockingQueue<HashtagTweet> bq, Twitter twitter) {
-		super(bq, twitter);
+	public TweetProcWorker(BlockingQueue<HashtagTweet> bq, Twitter twitter, 
+			String threadName) {
+		
+		super(bq, twitter, threadName);
 	}
 	
 	@Override
@@ -22,13 +24,17 @@ public class TweetProcWorker extends Worker {
 		
 		for (;;) {
 			try {
-				HashtagTweet tweet = bq.take();			
+				Logger.log(TAG, getName() + " waiting for job.");
+				HashtagTweet tweet = bq.take();
+				Logger.log(TAG, getName() + " working on job.");
 				
 				// Stride data stuff here
 			
 				
 				// Create message to be sent to user
-				String message = String.format("%s heres your random number %s", tweet.getUserName(), Math.random()*1000);
+				String message = String.format("%s Have a random number: %s",
+						                       tweet.getUserName(),
+						                       Math.random()*1000);
 				
 				// Send @ reply to user
 				StatusUpdate statusUpdate = new StatusUpdate(message);
@@ -37,12 +43,10 @@ public class TweetProcWorker extends Worker {
 				
 				Logger.log(TAG, "message sent to: " + tweet.getUserName());
 				
-			} catch (InterruptedException e) {
-				// do nothing
 			} catch (TwitterException e) {
 				e.printStackTrace();
 				Logger.log(TAG, "Update failed: " + e.getMessage());
-			}
+			} catch (InterruptedException e) {}
 		}
 	}
 }

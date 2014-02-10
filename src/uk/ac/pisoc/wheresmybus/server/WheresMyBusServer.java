@@ -24,8 +24,8 @@ public class WheresMyBusServer {
 	public static void main(String[] args) {
 		
 		int numThreads = Integer.parseInt(args[0]);
-		int queueSize  = Integer.parseInt(args[1]);
-		String query   = args[2];
+		int queueSize = Integer.parseInt(args[1]);
+		String query = args[2];
 		
 		WheresMyBusServer server = 
 				new WheresMyBusServer(numThreads, queueSize, query);
@@ -40,10 +40,12 @@ public class WheresMyBusServer {
 		tweetProcWorkers = new ArrayList<>(numThreads);
 		
 		for (int i=0; i < numThreads; i++) {
-			tweetProcWorkers.add(new TweetProcWorker(bq, twitter));
+			tweetProcWorkers.add(
+					new TweetProcWorker(bq, twitter, "ProcWorker #" + i));
 		}
 		
-		twitterSearchWorker = new TwitterSearchWorker(bq, twitter, query);
+		twitterSearchWorker = 
+				new TwitterSearchWorker(bq, twitter, "SearchWorker #1", query);
 		
 		Logger.log(TAG, "server created.");
 	}
