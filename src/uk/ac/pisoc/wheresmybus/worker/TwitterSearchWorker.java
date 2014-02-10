@@ -16,9 +16,6 @@ public class TwitterSearchWorker extends Worker {
 	
 	private static final String TAG = "TwitterSearchWorker";
 	
-	public static final String QUERY = "#wheresmybus";
-	public static final String TEST_QUERY  = "#somerandomtag6";
-	
 	private List<Status> tweetCache;
 	
 	private Query twitterQuery;

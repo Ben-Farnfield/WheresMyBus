@@ -24,14 +24,15 @@ public class WheresMyBusServer {
 		
 		int numThreads = Integer.parseInt(args[0]);
 		int queueSize  = Integer.parseInt(args[1]);
+		String query   = args[2];
 		
-		WheresMyBusServer wheresMyBus = 
-				new WheresMyBusServer(numThreads, queueSize);
+		WheresMyBusServer server = 
+				new WheresMyBusServer(numThreads, queueSize, query);
 		
-		wheresMyBus.start();
+		server.start();
 	}
 	
-	public WheresMyBusServer(int numThreads, int queueSize) {
+	public WheresMyBusServer(int numThreads, int queueSize, String query) {
 		
 		bq = new ArrayBlockingQueue<>(queueSize);
 		twitter = TwitterFactory.getSingleton();
@@ -40,8 +41,7 @@ public class WheresMyBusServer {
 			tweetProcWorkers.add(new TweetProcWorker(bq, twitter));
 		}
 		
-		twitterSearchWorker = new TwitterSearchWorker(
-				bq, twitter, TwitterSearchWorker.TEST_QUERY);
+		twitterSearchWorker = new TwitterSearchWorker(bq, twitter, query);
 		
 		Logger.log(TAG, "server created.");
 	}
