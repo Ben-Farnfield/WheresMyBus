@@ -64,7 +64,7 @@ public class TwitterSearchWorker extends Worker {
 				
 			} catch (TwitterException e) {
 				e.printStackTrace();
-				Logger.log(TAG, "Search failed : " + e.getMessage());
+				Logger.log(TAG, "search failed : " + e.getMessage());
 				System.exit(-1);
 			} catch (InterruptedException e) {
 				// do nothing
