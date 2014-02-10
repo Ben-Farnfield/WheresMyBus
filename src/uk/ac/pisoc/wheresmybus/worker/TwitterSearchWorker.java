@@ -34,12 +34,22 @@ public class TwitterSearchWorker extends Worker {
 	public void run() {
 		super.run();
 		
+		// Load the tweetCache with old tweets
+		Logger.log(TAG, "searching for old tweets ...");
+		List<Status> tweets = search();
+		for (Status tweet : tweets) {
+			if (tweet.getGeoLocation() != null) {
+				tweetCache.add(tweet);
+			}
+		}
+		Logger.log(TAG, "tweetCache loaded with old tweets.");
+
+		// Search for new tweets
 		for (;;) {
 			Logger.log(TAG, "searching twitter ...");
 			
 			try {
-				queryResult = twitter.search(twitterQuery);		
-				List<Status> tweets = queryResult.getTweets();
+				tweets = search();
 				
 				for (Status tweet : tweets) {
 					// Check geolocation data has been included.
@@ -55,14 +65,20 @@ public class TwitterSearchWorker extends Worker {
 				}
 				
 				sleep(8000l); // Wait 8 seconds (5 is the min we could set).
-				
-			} catch (TwitterException e) {
-				e.printStackTrace();
-				Logger.log(TAG, "search failed : " + e.getMessage());
-				System.exit(-1);
+
 			} catch (InterruptedException e) {
 				// do nothing
 			}
 		}
+	}
+	
+	private List<Status> search() {
+		try {
+			queryResult = twitter.search(twitterQuery);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+			Logger.log(TAG, "search failed : " + e.getMessage());
+		}
+		return queryResult.getTweets();
 	}
 }

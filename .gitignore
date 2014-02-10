@@ -1,13 +1,16 @@
-# exclude binary files
+# binary files
 bin/
 
-# exclude temp files
+# temp files
 *~
 
-# exclude Eclipse files
+# Eclipse files
 .settings/
 .project
 .classpath
 
-# exclude lib
+# lib
 lib/
+
+# twitter4j settings
+twitter4j.properties

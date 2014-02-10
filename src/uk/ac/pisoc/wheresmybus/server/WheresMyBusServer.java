@@ -1,5 +1,6 @@
 package uk.ac.pisoc.wheresmybus.server;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -36,6 +37,7 @@ public class WheresMyBusServer {
 		
 		bq = new ArrayBlockingQueue<>(queueSize);
 		twitter = TwitterFactory.getSingleton();
+		tweetProcWorkers = new ArrayList<>(numThreads);
 		
 		for (int i=0; i < numThreads; i++) {
 			tweetProcWorkers.add(new TweetProcWorker(bq, twitter));

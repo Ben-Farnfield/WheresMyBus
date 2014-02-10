@@ -8,15 +8,15 @@ public class HashtagTweet {
 	private static final String TAG = "HashtagTweet";
 	
 	private String  userName;
-	private long    replyToUserId;
+	private long    replyToStatusId;
 	private double  lon;
 	private double  lat;
 
 	public HashtagTweet(Status tweet) {
-		userName      = "@" + tweet.getUser().getName();
-		replyToUserId = tweet.getInReplyToUserId();
-		lon           = tweet.getGeoLocation().getLongitude();
-		lat           = tweet.getGeoLocation().getLatitude();
+		userName        = "@" + tweet.getUser().getName();
+		replyToStatusId = tweet.getInReplyToStatusId();
+		lon             = tweet.getGeoLocation().getLongitude();
+		lat             = tweet.getGeoLocation().getLatitude();
 		
 		Logger.log(TAG, "hashtag tweet created.");
 	}
@@ -29,13 +29,13 @@ public class HashtagTweet {
 		return userName;
 	}
 
-	public long getReplyToUserId() {
-		return replyToUserId;
+	public long getReplyToStatusId() {
+		return replyToStatusId;
 	}
 
 	@Override
 	public String toString() {
-		return "HashtagTweet [userName=" + userName + ", replyToUserId="
-				+ replyToUserId + ", lon=" + lon + ", lat=" + lat + "]";
+		return "HashtagTweet [userName=" + userName + ", replyToStatusId="
+				+ replyToStatusId + ", lon=" + lon + ", lat=" + lat + "]";
 	}
 }
