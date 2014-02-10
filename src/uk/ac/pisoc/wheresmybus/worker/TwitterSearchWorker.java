@@ -18,8 +18,8 @@ public class TwitterSearchWorker extends Worker {
 	
 	private List<Status> tweetCache;
 	
-	private Query twitterQuery;
-	private QueryResult queryResult;
+	private Query        twitterQuery;
+	private QueryResult  queryResult;
 		
 	public TwitterSearchWorker(
 			BlockingQueue<HashtagTweet> bq, Twitter twitter, String query) {

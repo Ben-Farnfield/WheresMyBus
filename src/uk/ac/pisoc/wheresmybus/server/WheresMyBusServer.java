@@ -16,9 +16,9 @@ public class WheresMyBusServer {
 	private static final String TAG = "WheresMyBusServer";
 	
 	private BlockingQueue<HashtagTweet> bq;
-	private Twitter twitter;
-	private List<TweetProcWorker> tweetProcWorkers;
-	private TwitterSearchWorker twitterSearchWorker;
+	private Twitter                     twitter;
+	private List<TweetProcWorker>       tweetProcWorkers;
+	private TwitterSearchWorker         twitterSearchWorker;
 
 	public static void main(String[] args) {
 		
