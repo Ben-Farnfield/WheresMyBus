@@ -21,8 +21,12 @@ public class HashtagTweet {
 		Logger.log(TAG, "HashtagTweet created.");
 	}
 	
-	public String getLonLat() {
-		return lon + ", " + lat;
+	public String getLon() {
+		return "" + lon;
+	}
+	
+	public String getLat() {
+		return "" + lat;
 	}
 
 	public String getUserName() {
