@@ -15,9 +15,10 @@ public class TweetProcWorker extends Worker {
 	
 	private final String STRIDE_USERNAME = "";
 	
-	private String nearbyStop = "http://api.stride-project.com/"
+	private String nearbyStopURL = "http://api.stride-project.com/"
 			+ "transportapi/7c60e7f4-20ff-11e3-857c-fcfb53959281/"
-			+ "bus/stops/near?lon=%s&lat=%s";
+			+ "bus/stops/near";
+	private String nearbyStopParams = "lon=%s&lat=%s";
 	
 	private String busDeparture = "http://api.stride-project.com/"
 			+ "transportapi/7c60e7f4-20ff-11e3-857c-fcfb53959281/"
@@ -42,15 +43,18 @@ public class TweetProcWorker extends Worker {
 				Logger.log(TAG, getName() + " starting job ...");
 				
 				// Nearby Stops
-				String nearbyStopURL = getNearbyStopURL(tweet);
+				Logger.log(TAG, "finding bus stop for " + tweet.getUserName());
 				
-				String atcocode = "someCode"; // This will come from Stride
+				
+				
+				Logger.log(TAG, "found local bus stop.");
 				
 				// Live Bus Departures
-				String liveBusDepartURL = getLiveBusDepartURL(atcocode);
+				Logger.log(TAG, "finding bus times for " + tweet.getUserName());
 				
-				// Stride data stuff here
 				
+				
+				Logger.log(TAG, "found bus times.");
 				
 				// Create message to be sent to user
 				String message = String.format("%s Have a random number: %s",
@@ -64,17 +68,17 @@ public class TweetProcWorker extends Worker {
 		}
 	}
 	
-	private String getNearbyStopURL(HashtagTweet tweet) {
-		return String.format("http://api.stride-project.com/transportapi/"
-				+ "7c60e7f4-20ff-11e3-857c-fcfb53959281/bus/stops/near?"
-				+ "lon=%s&lat=%s",tweet.getLon(), tweet.getLat());
-	}
-	
-	private String getLiveBusDepartURL(String atcocode) {
-		return String.format("http://api.stride-project.com/transportapi/"
-				+ "7c60e7f4-20ff-11e3-857c-fcfb53959281/bus/stop/%s/live",
-				atcocode);
-	}
+//	private String getNearbyStopURL(HashtagTweet tweet) {
+//		return String.format("http://api.stride-project.com/transportapi/"
+//				+ "7c60e7f4-20ff-11e3-857c-fcfb53959281/bus/stops/near?"
+//				+ "lon=%s&lat=%s",tweet.getLon(), tweet.getLat());
+//	}
+//	
+//	private String getLiveBusDepartURL(String atcocode) {
+//		return String.format("http://api.stride-project.com/transportapi/"
+//				+ "7c60e7f4-20ff-11e3-857c-fcfb53959281/bus/stop/%s/live",
+//				atcocode);
+//	}
 	
 	private void sendUpdate(HashtagTweet tweet, String message) {
 		StatusUpdate statusUpdate = new StatusUpdate(message);
