@@ -11,7 +11,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-public class BusAndStop {
+public class BusTimeParser {
 	
 	private static final String TAG = "BusAndStop";
 

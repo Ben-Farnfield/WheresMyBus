@@ -13,8 +13,8 @@ import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import uk.ac.pisoc.stride.Stride;
-import uk.ac.pisoc.wheresmybus.json.AtCoCodeParser;
-import uk.ac.pisoc.wheresmybus.json.BusAndStop;
+import uk.ac.pisoc.wheresmybus.json.AtcocodeParser;
+import uk.ac.pisoc.wheresmybus.json.BusTimeParser;
 import uk.ac.pisoc.wheresmybus.logger.Logger;
 import uk.ac.pisoc.wheresmybus.model.Bus;
 import uk.ac.pisoc.wheresmybus.model.HashtagTweet;
@@ -40,8 +40,8 @@ public class TweetProcWorker extends Worker {
 			+ "[Data provided by Stride at %s]";
 	
 	private Stride stride = new Stride(STRIDE_USERNAME);
-	private AtCoCodeParser atcocodeParser = new AtCoCodeParser();
-	private BusAndStop busAndStopParser = new BusAndStop();
+	private AtcocodeParser atcocodeParser = new AtcocodeParser();
+	private BusTimeParser busTimeParser = new BusTimeParser();
 	private DateFormat df = new SimpleDateFormat("kk:mm:ss");
 
 	public TweetProcWorker(BlockingQueue<HashtagTweet> bq, Twitter twitter, 
@@ -116,7 +116,7 @@ public class TweetProcWorker extends Worker {
 			busTimesURL = String.format(
 					busTimesUrlFS, URLEncoder.encode(atcocode, "UTF-8"));
 			connection = stride.getHttpURLConnection(busTimesURL);
-			return busAndStopParser.parse(connection.getInputStream());
+			return busTimeParser.parse(connection.getInputStream());
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

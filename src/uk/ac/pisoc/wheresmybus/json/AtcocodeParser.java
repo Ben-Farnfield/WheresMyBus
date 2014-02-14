@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-public class AtCoCodeParser {
+public class AtcocodeParser {
 	
 	private static final String TAG = "AtCoCodeParser";
 

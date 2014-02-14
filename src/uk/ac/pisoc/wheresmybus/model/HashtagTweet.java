@@ -21,21 +21,13 @@ public class HashtagTweet {
 		Logger.log(TAG, "HashtagTweet created.");
 	}
 	
-	public String getLon() {
-		return "" + lon;
-	}
+	public String getLon() { return "" + lon; }
 	
-	public String getLat() {
-		return "" + lat;
-	}
+	public String getLat() { return "" + lat; }
 
-	public String getUserName() {
-		return userName;
-	}
+	public String getUserName() { return userName; }
 
-	public long getReplyToStatusId() {
-		return replyToStatusId;
-	}
+	public long getReplyToStatusId() { return replyToStatusId; }
 
 	@Override
 	public String toString() {
