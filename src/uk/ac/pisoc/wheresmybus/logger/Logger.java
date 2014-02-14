@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class Logger {
 
-	public static void log(String tag, String msg) {
+	public static void log( String tag, String msg ) {
 		
-		System.out.println("[" + new Date() + "] [" + tag + "] " + msg);
+		System.out.println( "[" + new Date() + "] [" + tag + "] " + msg );
 	}
 }
