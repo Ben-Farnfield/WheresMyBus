@@ -10,9 +10,10 @@ public abstract class Worker extends Thread {
 	protected BlockingQueue<HashtagTweet> bq;
 	protected Twitter twitter;
 	
-	public Worker(BlockingQueue<HashtagTweet> bq, Twitter twitter, 
-			String threadName) {
-		
+	public Worker( BlockingQueue<HashtagTweet> bq,
+			       Twitter twitter,
+			       String threadName )
+	{	
 		super(threadName);
 		this.bq = bq;
 		this.twitter = twitter;
