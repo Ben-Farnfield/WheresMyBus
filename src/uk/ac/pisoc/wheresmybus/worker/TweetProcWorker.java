@@ -36,7 +36,7 @@ public class TweetProcWorker extends Worker {
 	
 	private String tweetFS = "%s here’s your bus!\n"
 			+ "\nBus number  : %s\n"
-			+ "Arrival time : %s\n\n"
+			+ "Arrival time  : %s\n\n"
 			+ "[Data provided by Stride at %s]";
 	
 	private Stride stride = new Stride(STRIDE_USERNAME);
