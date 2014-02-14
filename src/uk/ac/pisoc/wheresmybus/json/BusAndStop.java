@@ -3,6 +3,7 @@ package uk.ac.pisoc.wheresmybus.json;
 import java.io.IOException;
 import java.io.InputStream;
 
+import uk.ac.pisoc.wheresmybus.logger.Logger;
 import uk.ac.pisoc.wheresmybus.model.Bus;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -11,6 +12,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 public class BusAndStop {
+	
+	private static final String TAG = "BusAndStop";
 
     public Bus parse(InputStream in) throws IOException {
 
@@ -24,6 +27,7 @@ public class BusAndStop {
 				Bus bus = new Bus();
 				bus.setNumber(jp.getText());
 				bus.setTime(getTime(jp));
+				Logger.log(TAG, "found bus times.");
 				return bus;
 			}
 		}

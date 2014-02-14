@@ -3,11 +3,15 @@ package uk.ac.pisoc.wheresmybus.json;
 import java.io.IOException;
 import java.io.InputStream;
 
+import uk.ac.pisoc.wheresmybus.logger.Logger;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 public class AtCoCodeParser {
+	
+	private static final String TAG = "AtCoCodeParser";
 
     public String parse(InputStream in) throws IOException {
 
@@ -24,6 +28,7 @@ public class AtCoCodeParser {
             String fieldName = jp.getCurrentName();
             jp.nextToken();
             if (fieldName.equals("atcocode")) {
+            	Logger.log(TAG, "found local bus stop.");
                 return jp.getText();
             }
         }

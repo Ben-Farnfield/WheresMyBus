@@ -3,7 +3,6 @@ package uk.ac.pisoc.wheresmybus.worker;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -61,59 +60,75 @@ public class TweetProcWorker extends Worker {
 				HashtagTweet tweet = bq.take();
 				Logger.log(TAG, getName() + " starting job ...");
 				
-				// Nearby Stops
-				Logger.log(TAG, getName() 
-						+ " finding bus stop for " + tweet.getUserName());
-				
-				String busStopParams = String.format(busStopParamsFS, 
-						URLEncoder.encode(tweet.getLat(), "UTF-8"), 
-						URLEncoder.encode(tweet.getLon(), "UTF-8"));
-				
-				HttpURLConnection connection = 
-						stride.getHttpURLConnection(busStopURL, busStopParams);
-				
-				String atcocode = 
-						atcocodeParser.parse(connection.getInputStream());
-				
-				// CLOSE THE STREAM!
-				
-				Logger.log(TAG, getName() + " found local bus stop.");
-				
-				// Live Bus Departures
-				Logger.log(TAG, getName() 
-						+ " finding bus times for " + tweet.getUserName());
-				
-				String busTimesURL = String.format(
-						busTimesUrlFS, URLEncoder.encode(atcocode, "UTF-8"));
-				
-				connection = stride.getHttpURLConnection(busTimesURL);
-				
-				Bus bus = 
-						busAndStopParser.parse(connection.getInputStream());
-				
-				Logger.log(TAG, "found bus times.");
-				
-				// Create message to be sent to user
-				
-				String message = String.format(tweetFS, tweet.getUserName(), 
-						bus.getNumber(), bus.getTime(), df.format(new Date()));
-				
-				// Send @ reply to user
-				sendUpdate(tweet, message);
+				String atcocode = findBusStop(tweet);
+		        if (atcocode == null) {
+		            throw new Exception(
+		            		"No bus stop found for " + tweet.getUserName());
+		        }
+
+				Bus bus = findNextBus(tweet, atcocode);
+		        if (bus == null) {
+		            throw new Exception(
+		            		"No next bus found for " + tweet.getUserName());
+		        }
+
+				sendUpdate(tweet, bus);
 				
 			} catch (InterruptedException e) {
 				// do nothing
-			} catch (UnsupportedEncodingException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+				System.err.println(e.getMessage());
 			}
 		}
 	}
 	
-	private void sendUpdate(HashtagTweet tweet, String message) {
+	/* finds the users closest bus stop */
+	private String findBusStop(HashtagTweet tweet) {
+		
+		Logger.log(TAG, getName() 
+				+ " finding bus stop for " + tweet.getUserName());
+		
+		String busStopParams;
+		HttpURLConnection connection;
+		try {
+			busStopParams = String.format(busStopParamsFS, 
+					URLEncoder.encode(tweet.getLat(), "UTF-8"), 
+					URLEncoder.encode(tweet.getLon(), "UTF-8"));
+			connection = stride.getHttpURLConnection(busStopURL, busStopParams);
+			return atcocodeParser.parse(connection.getInputStream());
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/* finds the next bus for the given bus stop */
+	private Bus findNextBus(HashtagTweet tweet, String atcocode) {
+		Logger.log(TAG, getName() 
+				+ " finding bus times for " + tweet.getUserName());
+		
+		String busTimesURL;
+		HttpURLConnection connection;
+		try {
+			busTimesURL = String.format(
+					busTimesUrlFS, URLEncoder.encode(atcocode, "UTF-8"));
+			connection = stride.getHttpURLConnection(busTimesURL);
+			return busAndStopParser.parse(connection.getInputStream());
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/* sends an @reply to the user */
+	private void sendUpdate(HashtagTweet tweet, Bus bus) {
+		String message = String.format(tweetFS, tweet.getUserName(), 
+				bus.getNumber(), bus.getTime(), df.format(new Date()));
 		StatusUpdate statusUpdate = new StatusUpdate(message);
 		statusUpdate.setInReplyToStatusId(tweet.getReplyToStatusId());
 		try {
