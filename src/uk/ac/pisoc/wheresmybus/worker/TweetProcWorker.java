@@ -24,7 +24,7 @@ public class TweetProcWorker extends Worker {
 	
 	private static final String TAG = "TweetProcWorker";
 	
-	private final String STRIDE_USERNAME = "f69d615e-9dea-4f33-b744-484a32debf54 ";
+	private final String STRIDE_USERNAME = "";
 	
 	private String busStopURL = "http://api.stride-project.com/"
 			+ "transportapi/7c60e7f4-20ff-11e3-857c-fcfb53959281/"
