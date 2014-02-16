@@ -36,7 +36,7 @@ public class TwitterSearchWorker extends Worker {
     public void run() {
         super.run();
 
-        primeCache();
+        primeStatusIdCache();
 
         for ( ;; ) {
             try {
@@ -58,7 +58,7 @@ public class TwitterSearchWorker extends Worker {
         }
     }
 
-    private void primeCache() {
+    private void primeStatusIdCache() {
         List<Status> tweets = searchTwitter();
         for ( Status tweet : tweets ) {
             if ( tweet.getGeoLocation() != null ) {
