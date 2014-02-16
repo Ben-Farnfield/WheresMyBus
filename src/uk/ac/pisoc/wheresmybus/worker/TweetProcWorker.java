@@ -11,21 +11,22 @@ import java.util.concurrent.BlockingQueue;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import uk.ac.pisoc.stride.Stride;
 import uk.ac.pisoc.wheresmybus.json.JsonParseException;
 import uk.ac.pisoc.wheresmybus.json.StrideJsonParser;
 import uk.ac.pisoc.wheresmybus.logger.Logger;
 import uk.ac.pisoc.wheresmybus.model.Bus;
 import uk.ac.pisoc.wheresmybus.model.HashtagTweet;
+import uk.ac.pisoc.wheresmybus.net.StrideConnection;
 
 public class TweetProcWorker extends Worker {
 
     private static final String TAG = "TweetProcWorker";
 
     private final String STRIDE_USERNAME =
-            ""; // TODO read from file
+            ""; // TODO read from config
 
-    private Stride stride = new Stride( STRIDE_USERNAME );
+    private StrideConnection strideConnection =
+                                    new StrideConnection( STRIDE_USERNAME );
 
     private StrideJsonParser strideJsonParser = new StrideJsonParser();
 
@@ -106,7 +107,7 @@ public class TweetProcWorker extends Worker {
                 URLEncoder.encode( lon, "UTF-8" ));
 
         HttpURLConnection con =
-                stride.getHttpURLConnection( busStopURL, busStopParams );
+                strideConnection.getHttpURLConnection( busStopURL, busStopParams );
 
         return strideJsonParser.parseAtcocode( con.getInputStream() );
     }
@@ -119,7 +120,7 @@ public class TweetProcWorker extends Worker {
                 URLEncoder.encode( atcocode, "UTF-8" ));
 
         HttpURLConnection con =
-                stride.getHttpURLConnection( busTimesURL );
+                strideConnection.getHttpURLConnection( busTimesURL );
 
         return strideJsonParser.parseBusTimes( con.getInputStream() );
     }
