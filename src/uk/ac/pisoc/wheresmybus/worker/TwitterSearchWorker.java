@@ -40,7 +40,7 @@ public class TwitterSearchWorker extends Worker {
 
         for ( ;; ) {
             try {
-                List<Status> tweets = search();
+                List<Status> tweets = searchTwitter();
 
                 for ( Status tweet : tweets ) {
                     if ( tweet.getGeoLocation() != null
@@ -59,7 +59,7 @@ public class TwitterSearchWorker extends Worker {
     }
 
     private void primeCache() {
-        List<Status> tweets = search();
+        List<Status> tweets = searchTwitter();
         for ( Status tweet : tweets ) {
             if ( tweet.getGeoLocation() != null ) {
                 statusIdCache.add( tweet.getId() );
@@ -68,7 +68,7 @@ public class TwitterSearchWorker extends Worker {
         Logger.log( TAG, "cache primed with old tweets." );
     }
 
-    private List<Status> search() {
+    private List<Status> searchTwitter() {
         try {
         	Logger.log( TAG, "searching twitter ..." );
             queryResult = twitter.search( twitterQuery );
