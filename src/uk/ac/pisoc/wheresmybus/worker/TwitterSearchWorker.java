@@ -40,26 +40,14 @@ public class TwitterSearchWorker extends Worker {
 
         for ( ;; ) {
             try {
-                List<Status> tweets = searchTwitter();
-
-                for ( Status tweet : tweets ) {
-                    if ( tweet.getGeoLocation() != null
-                         && !statusIdCache.contains( tweet.getId() )) {
-
-                        Logger.log( TAG, "found tweet from: @"
-                                + tweet.getUser().getScreenName() );
-
-                        statusIdCache.add( tweet.getId() );
-                        bq.put( new HashtagTweet( tweet ));
-                    }
-                }
+                procTweets( searchForTweets() );
                 sleep( 8000l ); // Wait 8 seconds
             } catch ( InterruptedException e ) { }
         }
     }
 
     private void primeStatusIdCache() {
-        List<Status> tweets = searchTwitter();
+        List<Status> tweets = searchForTweets();
         for ( Status tweet : tweets ) {
             if ( tweet.getGeoLocation() != null ) {
                 statusIdCache.add( tweet.getId() );
@@ -68,14 +56,35 @@ public class TwitterSearchWorker extends Worker {
         Logger.log( TAG, "cache primed with old tweets." );
     }
 
-    private List<Status> searchTwitter() {
+    private List<Status> searchForTweets() {
         try {
-        	Logger.log( TAG, "searching twitter ..." );
+            Logger.log( TAG, "searching twitter ..." );
             queryResult = twitter.search( twitterQuery );
         } catch ( TwitterException e ) {
             e.printStackTrace();
             Logger.log( TAG, "search failed : " + e.getMessage() );
         }
         return queryResult.getTweets();
+    }
+
+    private void procTweets(List<Status> tweets) {
+        for ( Status tweet : tweets ) {
+            if ( tweet.getGeoLocation() != null
+                 && !statusIdCache.contains( tweet.getId() )) {
+
+                Logger.log( TAG, "found tweet from @"
+                        + tweet.getUser().getScreenName() );
+
+                try {
+                    bq.put( new HashtagTweet( tweet ));
+                    statusIdCache.add( tweet.getId() );
+                } catch ( InterruptedException e ) {
+                    Logger.log(TAG, "Thread interrupted while adding @"
+                            + tweet.getUser().getScreenName()
+                            + " to job queue."
+                            + " Tweet NOT added to StatusIdCache.");
+                }
+            }
+        }
     }
 }
