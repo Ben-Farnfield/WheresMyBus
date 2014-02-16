@@ -8,6 +8,7 @@ import twitter4j.QueryResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+
 import uk.ac.pisoc.wheresmybus.cache.StatusIdCache;
 import uk.ac.pisoc.wheresmybus.logger.Logger;
 import uk.ac.pisoc.wheresmybus.model.HashtagTweet;
@@ -67,7 +68,7 @@ public class TwitterSearchWorker extends Worker {
         return queryResult.getTweets();
     }
 
-    private void procTweets(List<Status> tweets) {
+    private void procTweets( List<Status> tweets ) {
         for ( Status tweet : tweets ) {
             if ( tweet.getGeoLocation() != null
                  && !statusIdCache.contains( tweet.getId() )) {
@@ -79,10 +80,10 @@ public class TwitterSearchWorker extends Worker {
                     bq.put( new HashtagTweet( tweet ));
                     statusIdCache.add( tweet.getId() );
                 } catch ( InterruptedException e ) {
-                    Logger.log(TAG, "Thread interrupted while adding @"
+                    Logger.log( TAG, "Thread interrupted while adding @"
                             + tweet.getUser().getScreenName()
                             + " to job queue."
-                            + " Tweet NOT added to StatusIdCache.");
+                            + " Tweet NOT added to cache." );
                 }
             }
         }
