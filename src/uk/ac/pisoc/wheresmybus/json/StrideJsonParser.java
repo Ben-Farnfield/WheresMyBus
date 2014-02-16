@@ -22,8 +22,7 @@ public class StrideJsonParser {
      * @throws JsonParseException
      * @throws IOException
      */
-    public String parseAtcocode( InputStream in )
-            throws JsonParseException, IOException {
+    public String parseAtcocode( InputStream in ) throws JsonParseException {
 
         JsonParser jp = null;
 
@@ -40,9 +39,13 @@ public class StrideJsonParser {
 
             throw new JsonParseException( TAG, "no atcocode found." );
 
+        } catch ( IOException e ) {
+            throw new JsonParseException( TAG, e.getMessage() );
         } finally {
-            if ( jp != null ) jp.close();
-            if ( in != null ) in.close();
+            try {
+                if ( jp != null ) jp.close();
+                if ( in != null ) in.close();
+            } catch ( IOException e ) {}
         }
     }
 
@@ -53,8 +56,7 @@ public class StrideJsonParser {
      * @throws JsonParseException
      * @throws IOException
      */
-    public Bus parseBusTimes( InputStream in )
-            throws JsonParseException, IOException {
+    public Bus parseBusTimes( InputStream in ) throws JsonParseException {
 
         Bus bus = new Bus();
         JsonParser jp = null;
@@ -79,9 +81,13 @@ public class StrideJsonParser {
 
             return bus;
 
+        } catch ( IOException e ) {
+            throw new JsonParseException( TAG, e.getMessage() );
         } finally {
-            if ( jp != null ) jp.close();
-            if ( in != null ) in.close();
+            try {
+                if ( jp != null ) jp.close();
+                if ( in != null ) in.close();
+            } catch ( IOException e ) {}
         }
     }
 }
