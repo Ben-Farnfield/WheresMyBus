@@ -14,49 +14,49 @@ import uk.ac.pisoc.wheresmybus.worker.TwitterSearchWorker;
 
 public class WheresMyBusServer {
 
-	private static final String TAG = "WheresMyBusServer";
+    private static final String TAG = "WheresMyBusServer";
 
-	private BlockingQueue<HashtagTweet> bq;
-	private Twitter twitter;
-	
-	private List<TweetProcWorker> tweetProcWorkers;
-	private TwitterSearchWorker twitterSearchWorker;
+    private BlockingQueue<HashtagTweet> bq;
+    private Twitter twitter;
 
-	public static void main( String[] args ) {
-		int numThreads = Integer.parseInt( args[0] );
-		int queueSize = Integer.parseInt( args[1] );
-		String query = args[2];
+    private List<TweetProcWorker> tweetProcWorkers;
+    private TwitterSearchWorker twitterSearchWorker;
 
-		WheresMyBusServer server = 
-				new WheresMyBusServer( numThreads, queueSize, query );
+    public static void main( String[] args ) {
+        int numThreads = Integer.parseInt( args[0] );
+        int queueSize = Integer.parseInt( args[1] );
+        String query = args[2];
 
-		server.start( );
-	}
+        WheresMyBusServer server =
+                new WheresMyBusServer( numThreads, queueSize, query );
 
-	public WheresMyBusServer( int numThreads, int queueSize, String query ) {
-		bq = new ArrayBlockingQueue<>( queueSize );
-		twitter = TwitterFactory.getSingleton( );
-		tweetProcWorkers = new ArrayList<>( numThreads );
+        server.start( );
+    }
 
-		for ( int i = 0; i < numThreads; i++ ) {
-			tweetProcWorkers.add(
-					new TweetProcWorker( bq, twitter,"ProcWorker #" + i ));
-		}
+    public WheresMyBusServer( int numThreads, int queueSize, String query ) {
+        bq = new ArrayBlockingQueue<>( queueSize );
+        twitter = TwitterFactory.getSingleton( );
+        tweetProcWorkers = new ArrayList<>( numThreads );
 
-		twitterSearchWorker = 
-				new TwitterSearchWorker( bq, twitter,"SearchWorker #1", query);
+        for ( int i = 0; i < numThreads; i++ ) {
+            tweetProcWorkers.add(
+                    new TweetProcWorker( bq, twitter,"ProcWorker #" + i ));
+        }
 
-		Logger.log( TAG, "server created." );
-	}
+        twitterSearchWorker =
+                new TwitterSearchWorker( bq, twitter,"SearchWorker #1", query);
 
-	public void start( ) {
+        Logger.log( TAG, "server created." );
+    }
 
-		for ( TweetProcWorker worker : tweetProcWorkers ) {
-			worker.start( );
-		}
+    public void start( ) {
 
-		twitterSearchWorker.start( );
+        for ( TweetProcWorker worker : tweetProcWorkers ) {
+            worker.start( );
+        }
 
-		Logger.log( TAG, "server started." );
-	}
+        twitterSearchWorker.start( );
+
+        Logger.log( TAG, "server started." );
+    }
 }

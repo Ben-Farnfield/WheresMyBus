@@ -14,68 +14,68 @@ import uk.ac.pisoc.wheresmybus.model.HashtagTweet;
 
 public class TwitterSearchWorker extends Worker {
 
-	private static final String TAG = "TwitterSearchWorker";
+    private static final String TAG = "TwitterSearchWorker";
 
-	private final int CACHE_SIZE = 300;
-	private StatusIdCache statusIdCache = new StatusIdCache( CACHE_SIZE );
+    private final int CACHE_SIZE = 300;
+    private StatusIdCache statusIdCache = new StatusIdCache( CACHE_SIZE );
 
-	private Query twitterQuery;
-	private QueryResult queryResult;
+    private Query twitterQuery;
+    private QueryResult queryResult;
 
-	public TwitterSearchWorker( BlockingQueue<HashtagTweet> bq,
-			                    Twitter twitter,
-			                    String threadName, 
-			                    String query )
-	{
-		super( bq, twitter, threadName );
-		twitterQuery = new Query( query );
-		twitterQuery.setCount( 100 ); // max number of results
-	}
+    public TwitterSearchWorker( BlockingQueue<HashtagTweet> bq,
+                                Twitter twitter,
+                                String threadName,
+                                String query )
+    {
+        super( bq, twitter, threadName );
+        twitterQuery = new Query( query );
+        twitterQuery.setCount( 100 ); // max number of results
+    }
 
-	@Override
-	public void run( ) {
-		super.run( );
-		
-		primeCache( );
-		
-		for ( ;; ) {
-			Logger.log( TAG, "searching twitter ..." );
-			try {
-				List<Status> tweets = search( );
+    @Override
+    public void run( ) {
+        super.run( );
 
-				for ( Status tweet : tweets ) {
-					if ( tweet.getGeoLocation( ) != null
-				         && !statusIdCache.contains( tweet.getId( ) )) {
+        primeCache( );
 
-						Logger.log( TAG, "found tweet from: @"
-								+ tweet.getUser( ).getScreenName( ) );
+        for ( ;; ) {
+            Logger.log( TAG, "searching twitter ..." );
+            try {
+                List<Status> tweets = search( );
 
-						statusIdCache.add( tweet.getId( ) );
-						bq.put( new HashtagTweet( tweet ));
-					}
-				}
-				sleep( 8000l ); // Wait 8 seconds
-			} catch ( InterruptedException e ) { }
-		}
-	}
+                for ( Status tweet : tweets ) {
+                    if ( tweet.getGeoLocation( ) != null
+                         && !statusIdCache.contains( tweet.getId( ) )) {
 
-	private void primeCache( ) {
-		List<Status> tweets = search( );
-		for ( Status tweet : tweets ) {
-			if ( tweet.getGeoLocation( ) != null ) {
-				statusIdCache.add( tweet.getId( ) );
-			}
-		}
-		Logger.log( TAG, "cache primed with old tweets." );
-	}
+                        Logger.log( TAG, "found tweet from: @"
+                                + tweet.getUser( ).getScreenName( ) );
 
-	private List<Status> search( ) {
-		try {
-			queryResult = twitter.search( twitterQuery );
-		} catch ( TwitterException e ) {
-			e.printStackTrace( );
-			Logger.log( TAG, "search failed : " + e.getMessage( ) );
-		}
-		return queryResult.getTweets( );
-	}
+                        statusIdCache.add( tweet.getId( ) );
+                        bq.put( new HashtagTweet( tweet ));
+                    }
+                }
+                sleep( 8000l ); // Wait 8 seconds
+            } catch ( InterruptedException e ) { }
+        }
+    }
+
+    private void primeCache( ) {
+        List<Status> tweets = search( );
+        for ( Status tweet : tweets ) {
+            if ( tweet.getGeoLocation( ) != null ) {
+                statusIdCache.add( tweet.getId( ) );
+            }
+        }
+        Logger.log( TAG, "cache primed with old tweets." );
+    }
+
+    private List<Status> search( ) {
+        try {
+            queryResult = twitter.search( twitterQuery );
+        } catch ( TwitterException e ) {
+            e.printStackTrace( );
+            Logger.log( TAG, "search failed : " + e.getMessage( ) );
+        }
+        return queryResult.getTweets( );
+    }
 }

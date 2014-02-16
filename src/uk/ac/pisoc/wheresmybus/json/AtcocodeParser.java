@@ -11,27 +11,27 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public class AtcocodeParser {
 
-	private static final String TAG = "AtCoCodeParser";
+    private static final String TAG = "AtCoCodeParser";
 
-	public String parse(InputStream in) throws IOException {
+    public String parse(InputStream in) throws IOException {
 
-		JsonFactory jsonFactory = new JsonFactory();
-		JsonParser jp = jsonFactory.createParser(in);
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonParser jp = jsonFactory.createParser(in);
 
-		if (jp.nextToken() != JsonToken.START_OBJECT) {
-			throw new IOException("Expected data to start with an object");
-		}
+        if (jp.nextToken() != JsonToken.START_OBJECT) {
+            throw new IOException("Expected data to start with an object");
+        }
 
-		jp.nextToken();
+        jp.nextToken();
 
-		while (jp.nextToken() != JsonToken.END_OBJECT) {
-			String fieldName = jp.getCurrentName();
-			jp.nextToken();
-			if (fieldName.equals("atcocode")) {
-				Logger.log(TAG, "found local bus stop.");
-				return jp.getText();
-			}
-		}
-		return null;
-	}
+        while (jp.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = jp.getCurrentName();
+            jp.nextToken();
+            if (fieldName.equals("atcocode")) {
+                Logger.log(TAG, "found local bus stop.");
+                return jp.getText();
+            }
+        }
+        return null;
+    }
 }
