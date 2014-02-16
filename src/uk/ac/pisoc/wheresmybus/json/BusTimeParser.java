@@ -12,13 +12,13 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public class BusTimeParser {
 
-    private static final String TAG = "BusAndStop";
+    private static final String TAG = "BusTimeParser";
+
+    private JsonFactory jf = new JsonFactory();
 
     public Bus parse( InputStream in ) throws IOException {
 
         Bus bus = new Bus();
-
-        JsonFactory jf = new JsonFactory();
         JsonParser jp = null;
 
         try {

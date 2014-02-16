@@ -13,30 +13,24 @@ public class AtcocodeParser {
 
     private static final String TAG = "AtcocodeParser";
 
+    private JsonFactory jsonFactory = new JsonFactory();
+
     public String parse( InputStream in ) throws IOException {
 
-        JsonFactory jsonFactory = new JsonFactory();
         JsonParser jp = null;
 
         try {
             jp = jsonFactory.createParser( in );
 
-            if ( jp.nextToken() != JsonToken.START_OBJECT ) {
-                Logger.log( TAG, "JSON syntax error." );
-                throw new IOException();
-            }
-
-            jp.nextToken();
-
             while ( jp.nextToken() != JsonToken.END_OBJECT ) {
                 String fieldName = jp.getCurrentName();
-                jp.nextToken();
                 if ( "atcocode".equals( fieldName )) {
+                    jp.nextToken();
                     return jp.getText();
                 }
             }
 
-            Logger.log( TAG, "No atcocode found." );
+            Logger.log( TAG, "no atcocode found." );
             throw new IOException();
 
         } finally {
