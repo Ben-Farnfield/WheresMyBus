@@ -3,12 +3,12 @@ package uk.ac.pisoc.wheresmybus.cache;
 public class StatusIdCache {
 
     private int index = 0;
-    private int lastIndex;
+    private int numIDs;
     private long[] statusIDs;
 
     public StatusIdCache( int numIDs ) {
         statusIDs = new long[numIDs];
-        lastIndex = numIDs - 1;
+        this.numIDs = numIDs;
     }
 
     public void add( long statusID ) {
@@ -17,17 +17,13 @@ public class StatusIdCache {
     }
 
     public boolean contains( long testID ) {
-        for ( int i = 0; i <= lastIndex; i++ ) {
+        for ( int i = 0; i < numIDs; i++ ) {
             if ( statusIDs[i] == testID ) return true;
         }
         return false;
     }
 
     private void nextIndex() {
-        if ( index == lastIndex ) {
-            index = 0;
-        } else {
-            index++;
-        }
+        index = ( index + 1 ) % numIDs;
     }
 }
