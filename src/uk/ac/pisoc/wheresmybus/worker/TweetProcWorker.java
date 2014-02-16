@@ -12,9 +12,8 @@ import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import uk.ac.pisoc.stride.Stride;
-import uk.ac.pisoc.wheresmybus.json.AtcocodeParser;
-import uk.ac.pisoc.wheresmybus.json.BusTimeParser;
 import uk.ac.pisoc.wheresmybus.json.JsonParseException;
+import uk.ac.pisoc.wheresmybus.json.StrideJsonParser;
 import uk.ac.pisoc.wheresmybus.logger.Logger;
 import uk.ac.pisoc.wheresmybus.model.Bus;
 import uk.ac.pisoc.wheresmybus.model.HashtagTweet;
@@ -24,7 +23,11 @@ public class TweetProcWorker extends Worker {
     private static final String TAG = "TweetProcWorker";
 
     private final String STRIDE_USERNAME =
-            "f69d615e-9dea-4f33-b744-484a32debf54"; // TODO read from file
+            ""; // TODO read from file
+
+    private Stride stride = new Stride( STRIDE_USERNAME );
+
+    private StrideJsonParser strideJsonParser = new StrideJsonParser();
 
     /* Stride URL's */
 
@@ -44,12 +47,6 @@ public class TweetProcWorker extends Worker {
                            + "Arrival time  : %s\n"
                            + "\n"
                            + "[Data provided by Stride at %s]";
-
-
-    private Stride stride = new Stride( STRIDE_USERNAME );
-
-    private AtcocodeParser atcocodeParser = new AtcocodeParser();
-    private BusTimeParser busTimeParser = new BusTimeParser();
 
     private DateFormat df = new SimpleDateFormat( "kk:mm:ss" );
 
@@ -109,7 +106,7 @@ public class TweetProcWorker extends Worker {
         HttpURLConnection connection =
                 stride.getHttpURLConnection( busStopURL, busStopParams );
 
-        return atcocodeParser.parse( connection.getInputStream() );
+        return strideJsonParser.parseAtcocode( connection.getInputStream() );
     }
 
     /* finds the next bus for the given bus stop */
@@ -122,7 +119,7 @@ public class TweetProcWorker extends Worker {
         HttpURLConnection connection =
                 stride.getHttpURLConnection( busTimesURL );
 
-        return busTimeParser.parse( connection.getInputStream() );
+        return strideJsonParser.parseBusTimes( connection.getInputStream() );
     }
 
     /* sends an @reply to the user */
