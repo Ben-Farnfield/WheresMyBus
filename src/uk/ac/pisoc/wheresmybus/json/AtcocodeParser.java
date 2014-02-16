@@ -13,25 +13,26 @@ public class AtcocodeParser {
 
     private static final String TAG = "AtCoCodeParser";
 
-    public String parse(InputStream in) throws IOException {
+    public String parse( InputStream in ) throws IOException {
 
         JsonFactory jsonFactory = new JsonFactory();
-        JsonParser jp = jsonFactory.createParser(in);
+        JsonParser jp = jsonFactory.createParser( in );
 
-        if (jp.nextToken() != JsonToken.START_OBJECT) {
-            throw new IOException("Expected data to start with an object");
+        if ( jp.nextToken() != JsonToken.START_OBJECT ) {
+            Logger.log( TAG, "JSON doesn't begin with start object." );
+            throw new IOException();
         }
 
         jp.nextToken();
 
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
+        while ( jp.nextToken() != JsonToken.END_OBJECT ) {
             String fieldName = jp.getCurrentName();
             jp.nextToken();
-            if (fieldName.equals("atcocode")) {
-                Logger.log(TAG, "found local bus stop.");
+            if ( "atcocode".equals( fieldName )) {
                 return jp.getText();
             }
         }
-        return null;
+        Logger.log( TAG, "No atcocode found." );
+        throw new IOException();
     }
 }

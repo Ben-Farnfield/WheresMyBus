@@ -87,12 +87,14 @@ public class TweetProcWorker extends Worker {
                     throw new Exception(
                             "No bus stop found for " + tweet.getUserName() );
                 }
+                Logger.log( TAG, getName() + " found local bus stop." );
 
                 Bus bus = findNextBus( tweet, atcocode );
                 if ( bus == null ) {
                     throw new Exception(
                             "No next bus found for " + tweet.getUserName() );
                 }
+                Logger.log( TAG, getName() + " found bus times." );
 
                 sendUpdate( tweet, bus );
 

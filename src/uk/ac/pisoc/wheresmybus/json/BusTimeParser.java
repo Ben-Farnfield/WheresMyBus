@@ -15,34 +15,27 @@ public class BusTimeParser {
 
     private static final String TAG = "BusAndStop";
 
-    public Bus parse(InputStream in) throws IOException {
+    public Bus parse( InputStream in ) throws IOException {
 
         JsonFactory jf = new JsonFactory();
-        JsonParser jp = jf.createParser(in);
+        JsonParser jp = jf.createParser( in );
 
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
+        Bus bus = new Bus();
+
+        while ( jp.nextToken() != JsonToken.END_OBJECT ) {
             String fieldName = jp.getCurrentName();
-            if ("line".equalsIgnoreCase(fieldName)) {
+            if ( "line".equals( fieldName )) {
                 jp.nextToken();
-                Bus bus = new Bus();
-                bus.setNumber(jp.getText());
-                bus.setTime(getTime(jp));
-                Logger.log(TAG, "found bus times.");
-                return bus;
+                bus.setNumber( jp.getText() );
+            } else if ( "aimed_departure_time".equals( fieldName )) {
+                jp.nextToken();
+                bus.setTime( jp.getText() );
             }
         }
-        return null;
-    }
-
-    private static String getTime(JsonParser jp) throws JsonParseException,
-            IOException {
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jp.getCurrentName();
-            if ("aimed_departure_time".equalsIgnoreCase(fieldName)) {
-                jp.nextToken();
-                return jp.getText();
-            }
+        if ( bus.getNumber() == null || bus.getTime() == null ) {
+            Logger.log(TAG, "bus times not found.");
+            throw new IOException();
         }
-        return null;
+        return bus;
     }
 }
