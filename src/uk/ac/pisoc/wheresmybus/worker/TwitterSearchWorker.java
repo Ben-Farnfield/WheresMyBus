@@ -39,7 +39,6 @@ public class TwitterSearchWorker extends Worker {
         primeCache();
 
         for ( ;; ) {
-            Logger.log( TAG, "searching twitter ..." );
             try {
                 List<Status> tweets = search();
 
@@ -71,6 +70,7 @@ public class TwitterSearchWorker extends Worker {
 
     private List<Status> search() {
         try {
+        	Logger.log( TAG, "searching twitter ..." );
             queryResult = twitter.search( twitterQuery );
         } catch ( TwitterException e ) {
             e.printStackTrace();
