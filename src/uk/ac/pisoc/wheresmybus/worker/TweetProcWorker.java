@@ -77,11 +77,12 @@ public class TweetProcWorker extends Worker {
                 HashtagTweet tweet = bq.take();
                 Logger.log( TAG, getName() + " started job." );
 
-                String atcocode = findBusStop( tweet );
+                String atcocode =
+                        findBusStop( tweet.getLat(), tweet.getLon() );
                 Logger.log( TAG, getName() + " found closest bus stop to "
                                            + tweet.getUserName() );
 
-                Bus bus = findNextBus( tweet, atcocode );
+                Bus bus = findNextBus( atcocode );
                 Logger.log( TAG, getName() + " found bus times for "
                                            + tweet.getUserName() );
 
@@ -96,30 +97,30 @@ public class TweetProcWorker extends Worker {
     }
 
     /* finds the users closest bus stop */
-    private String findBusStop( HashtagTweet tweet )
+    private String findBusStop( String lat, String lon )
             throws JsonParseException, IOException {
 
         String busStopParams = String.format( busStopParamsFS,
-                URLEncoder.encode( tweet.getLat(), "UTF-8" ),
-                URLEncoder.encode( tweet.getLon(), "UTF-8" ));
+                URLEncoder.encode( lat, "UTF-8" ),
+                URLEncoder.encode( lon, "UTF-8" ));
 
-        HttpURLConnection connection =
+        HttpURLConnection con =
                 stride.getHttpURLConnection( busStopURL, busStopParams );
 
-        return strideJsonParser.parseAtcocode( connection.getInputStream() );
+        return strideJsonParser.parseAtcocode( con.getInputStream() );
     }
 
     /* finds the next bus for the given bus stop */
-    private Bus findNextBus( HashtagTweet tweet, String atcocode )
+    private Bus findNextBus( String atcocode )
             throws JsonParseException, IOException {
 
         String busTimesURL = String.format( busTimesFS,
                 URLEncoder.encode( atcocode, "UTF-8" ));
 
-        HttpURLConnection connection =
+        HttpURLConnection con =
                 stride.getHttpURLConnection( busTimesURL );
 
-        return strideJsonParser.parseBusTimes( connection.getInputStream() );
+        return strideJsonParser.parseBusTimes( con.getInputStream() );
     }
 
     /* sends an @reply to the user */
