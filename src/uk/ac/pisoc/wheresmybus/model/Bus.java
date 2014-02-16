@@ -6,13 +6,13 @@ public class Bus {
     private String time;
 
     public void setNumber( String number ) { this.number = number; }
-    public String getNumber( ) { return number; }
+    public String getNumber() { return number; }
 
     public void setTime( String time ) { this.time = time; }
-    public String getTime( ) { return time; }
+    public String getTime() { return time; }
 
     @Override
-    public String toString( ) {
+    public String toString() {
         return "Bus [number=" + number + ", time=" + time + "]";
     }
 }

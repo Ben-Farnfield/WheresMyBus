@@ -23,7 +23,7 @@ public class StatusIdCache {
         return false;
     }
 
-    private void nextIndex( ) {
+    private void nextIndex() {
         if ( index == lastIndex ) {
             index = 0;
         } else {

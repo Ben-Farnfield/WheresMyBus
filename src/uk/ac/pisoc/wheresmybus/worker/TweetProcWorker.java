@@ -43,8 +43,8 @@ public class TweetProcWorker extends Worker {
 
     private Stride stride = new Stride( STRIDE_USERNAME );
 
-    private AtcocodeParser atcocodeParser = new AtcocodeParser( );
-    private BusTimeParser busTimeParser = new BusTimeParser( );
+    private AtcocodeParser atcocodeParser = new AtcocodeParser();
+    private BusTimeParser busTimeParser = new BusTimeParser();
 
     private DateFormat df = new SimpleDateFormat( "kk:mm:ss" );
 
@@ -56,35 +56,35 @@ public class TweetProcWorker extends Worker {
     }
 
     @Override
-    public void run( ) {
-        super.run( );
+    public void run() {
+        super.run();
 
         for ( ;; ) {
             try {
-                Logger.log( TAG, getName( ) + " is waiting for job." );
+                Logger.log( TAG, getName() + " is waiting for job." );
 
-                HashtagTweet tweet = bq.take( );
+                HashtagTweet tweet = bq.take();
 
-                Logger.log( TAG, getName( ) + " has started job ..." );
+                Logger.log( TAG, getName() + " has started job ..." );
 
                 String atcocode = findBusStop( tweet );
                 if ( atcocode == null ) {
                     throw new Exception(
-                            "No bus stop found for " + tweet.getUserName( ));
+                            "No bus stop found for " + tweet.getUserName() );
                 }
 
                 Bus bus = findNextBus( tweet, atcocode );
                 if ( bus == null ) {
                     throw new Exception(
-                            "No next bus found for " + tweet.getUserName( ));
+                            "No next bus found for " + tweet.getUserName() );
                 }
 
                 sendUpdate( tweet, bus );
 
             } catch ( InterruptedException e ) { // do nothing
             } catch ( Exception e ) {
-                e.printStackTrace( );
-                System.err.println( e.getMessage( ));
+                e.printStackTrace();
+                System.err.println( e.getMessage() );
             }
         }
     }
@@ -92,32 +92,32 @@ public class TweetProcWorker extends Worker {
     /* finds the users closest bus stop */
     private String findBusStop( HashtagTweet tweet ) {
 
-        Logger.log( TAG, getName( )
-                + " finding bus stop for " + tweet.getUserName( ));
+        Logger.log( TAG, getName()
+                + " finding bus stop for " + tweet.getUserName() );
 
         String busStopParams;
         HttpURLConnection connection;
         try {
             busStopParams = String.format( busStopParamsFS,
-                    URLEncoder.encode( tweet.getLat( ), "UTF-8" ),
-                    URLEncoder.encode( tweet.getLon( ), "UTF-8" ));
+                    URLEncoder.encode( tweet.getLat(), "UTF-8" ),
+                    URLEncoder.encode( tweet.getLon(), "UTF-8" ));
 
             connection =
                     stride.getHttpURLConnection( busStopURL, busStopParams );
 
-            return atcocodeParser.parse( connection.getInputStream( ));
+            return atcocodeParser.parse( connection.getInputStream() );
         } catch ( UnsupportedEncodingException e ) {
-            e.printStackTrace( );
+            e.printStackTrace();
         } catch ( IOException e ) {
-            e.printStackTrace( );
+            e.printStackTrace();
         }
         return null;
     }
 
     /* finds the next bus for the given bus stop */
     private Bus findNextBus( HashtagTweet tweet, String atcocode ) {
-        Logger.log( TAG, getName( )
-                + " finding bus times for " + tweet.getUserName( ));
+        Logger.log( TAG, getName()
+                + " finding bus times for " + tweet.getUserName() );
 
         String busTimesURL;
         HttpURLConnection connection;
@@ -127,30 +127,30 @@ public class TweetProcWorker extends Worker {
 
             connection = stride.getHttpURLConnection( busTimesURL );
 
-            return busTimeParser.parse( connection.getInputStream( ));
+            return busTimeParser.parse( connection.getInputStream() );
         } catch ( UnsupportedEncodingException e ) {
-            e.printStackTrace( );
+            e.printStackTrace();
         } catch ( IOException e ) {
-            e.printStackTrace( );
+            e.printStackTrace();
         }
         return null;
     }
 
     /* sends an @reply to the user */
     private void sendUpdate( HashtagTweet tweet, Bus bus ) {
-        String message = String.format( tweetFS, tweet.getUserName( ),
+        String message = String.format( tweetFS, tweet.getUserName(),
                                                  bus.getNumber(),
                                                  bus.getTime(),
-                                                 df.format( new Date( ) ));
+                                                 df.format( new Date() ));
 
         StatusUpdate statusUpdate = new StatusUpdate( message );
-        statusUpdate.setInReplyToStatusId( tweet.getReplyToStatusId( ));
+        statusUpdate.setInReplyToStatusId( tweet.getReplyToStatusId() );
         try {
             twitter.updateStatus( statusUpdate );
-            Logger.log( TAG, "message sent to: " + tweet.getUserName( ));
+            Logger.log( TAG, "message sent to: " + tweet.getUserName() );
         } catch ( TwitterException e ) {
-            e.printStackTrace( );
-            Logger.log( TAG, "Update failed: " + e.getMessage( ));
+            e.printStackTrace();
+            Logger.log( TAG, "Update failed: " + e.getMessage() );
         }
     }
 }

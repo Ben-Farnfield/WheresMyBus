@@ -30,12 +30,12 @@ public class WheresMyBusServer {
         WheresMyBusServer server =
                 new WheresMyBusServer( numThreads, queueSize, query );
 
-        server.start( );
+        server.start();
     }
 
     public WheresMyBusServer( int numThreads, int queueSize, String query ) {
         bq = new ArrayBlockingQueue<>( queueSize );
-        twitter = TwitterFactory.getSingleton( );
+        twitter = TwitterFactory.getSingleton();
         tweetProcWorkers = new ArrayList<>( numThreads );
 
         for ( int i = 0; i < numThreads; i++ ) {
@@ -49,13 +49,13 @@ public class WheresMyBusServer {
         Logger.log( TAG, "server created." );
     }
 
-    public void start( ) {
+    public void start() {
 
         for ( TweetProcWorker worker : tweetProcWorkers ) {
-            worker.start( );
+            worker.start();
         }
 
-        twitterSearchWorker.start( );
+        twitterSearchWorker.start();
 
         Logger.log( TAG, "server started." );
     }

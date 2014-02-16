@@ -33,24 +33,24 @@ public class TwitterSearchWorker extends Worker {
     }
 
     @Override
-    public void run( ) {
-        super.run( );
+    public void run() {
+        super.run();
 
-        primeCache( );
+        primeCache();
 
         for ( ;; ) {
             Logger.log( TAG, "searching twitter ..." );
             try {
-                List<Status> tweets = search( );
+                List<Status> tweets = search();
 
                 for ( Status tweet : tweets ) {
-                    if ( tweet.getGeoLocation( ) != null
-                         && !statusIdCache.contains( tweet.getId( ) )) {
+                    if ( tweet.getGeoLocation() != null
+                         && !statusIdCache.contains( tweet.getId() )) {
 
                         Logger.log( TAG, "found tweet from: @"
-                                + tweet.getUser( ).getScreenName( ) );
+                                + tweet.getUser().getScreenName() );
 
-                        statusIdCache.add( tweet.getId( ) );
+                        statusIdCache.add( tweet.getId() );
                         bq.put( new HashtagTweet( tweet ));
                     }
                 }
@@ -59,23 +59,23 @@ public class TwitterSearchWorker extends Worker {
         }
     }
 
-    private void primeCache( ) {
-        List<Status> tweets = search( );
+    private void primeCache() {
+        List<Status> tweets = search();
         for ( Status tweet : tweets ) {
-            if ( tweet.getGeoLocation( ) != null ) {
-                statusIdCache.add( tweet.getId( ) );
+            if ( tweet.getGeoLocation() != null ) {
+                statusIdCache.add( tweet.getId() );
             }
         }
         Logger.log( TAG, "cache primed with old tweets." );
     }
 
-    private List<Status> search( ) {
+    private List<Status> search() {
         try {
             queryResult = twitter.search( twitterQuery );
         } catch ( TwitterException e ) {
-            e.printStackTrace( );
-            Logger.log( TAG, "search failed : " + e.getMessage( ) );
+            e.printStackTrace();
+            Logger.log( TAG, "search failed : " + e.getMessage() );
         }
-        return queryResult.getTweets( );
+        return queryResult.getTweets();
     }
 }
