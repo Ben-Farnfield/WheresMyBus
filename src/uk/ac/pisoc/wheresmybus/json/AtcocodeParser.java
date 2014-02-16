@@ -11,28 +11,37 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public class AtcocodeParser {
 
-    private static final String TAG = "AtCoCodeParser";
+    private static final String TAG = "AtcocodeParser";
 
     public String parse( InputStream in ) throws IOException {
 
         JsonFactory jsonFactory = new JsonFactory();
-        JsonParser jp = jsonFactory.createParser( in );
+        JsonParser jp = null;
 
-        if ( jp.nextToken() != JsonToken.START_OBJECT ) {
-            Logger.log( TAG, "JSON doesn't begin with start object." );
-            throw new IOException();
-        }
+        try {
+            jp = jsonFactory.createParser( in );
 
-        jp.nextToken();
-
-        while ( jp.nextToken() != JsonToken.END_OBJECT ) {
-            String fieldName = jp.getCurrentName();
-            jp.nextToken();
-            if ( "atcocode".equals( fieldName )) {
-                return jp.getText();
+            if ( jp.nextToken() != JsonToken.START_OBJECT ) {
+                Logger.log( TAG, "JSON syntax error." );
+                throw new IOException();
             }
+
+            jp.nextToken();
+
+            while ( jp.nextToken() != JsonToken.END_OBJECT ) {
+                String fieldName = jp.getCurrentName();
+                jp.nextToken();
+                if ( "atcocode".equals( fieldName )) {
+                    return jp.getText();
+                }
+            }
+
+            Logger.log( TAG, "No atcocode found." );
+            throw new IOException();
+
+        } finally {
+            if ( jp != null ) jp.close();
+            if ( in != null ) in.close();
         }
-        Logger.log( TAG, "No atcocode found." );
-        throw new IOException();
     }
 }

@@ -16,25 +16,35 @@ public class BusTimeParser {
 
     public Bus parse( InputStream in ) throws IOException {
 
-        JsonFactory jf = new JsonFactory();
-        JsonParser jp = jf.createParser( in );
-
         Bus bus = new Bus();
 
-        while ( jp.nextToken() != JsonToken.END_OBJECT ) {
-            String fieldName = jp.getCurrentName();
-            if ( "line".equals( fieldName )) {
-                jp.nextToken();
-                bus.setNumber( jp.getText() );
-            } else if ( "aimed_departure_time".equals( fieldName )) {
-                jp.nextToken();
-                bus.setTime( jp.getText() );
+        JsonFactory jf = new JsonFactory();
+        JsonParser jp = null;
+
+        try {
+            jp = jf.createParser( in );
+
+            while ( jp.nextToken() != JsonToken.END_OBJECT ) {
+                String fieldName = jp.getCurrentName();
+                if ( "line".equals( fieldName )) {
+                    jp.nextToken();
+                    bus.setNumber( jp.getText() );
+                } else if ( "aimed_departure_time".equals( fieldName )) {
+                    jp.nextToken();
+                    bus.setTime( jp.getText() );
+                }
             }
+
+            if ( bus.getNumber() == null || bus.getTime() == null ) {
+                Logger.log( TAG, "bus times not found." );
+                throw new IOException();
+            }
+
+            return bus;
+
+        } finally {
+            if ( jp != null ) jp.close();
+            if ( in != null ) in.close();
         }
-        if ( bus.getNumber() == null || bus.getTime() == null ) {
-            Logger.log( TAG, "bus times not found." );
-            throw new IOException();
-        }
-        return bus;
     }
 }
