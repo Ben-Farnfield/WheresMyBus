@@ -2,8 +2,8 @@ package uk.ac.pisoc.wheresmybus.model;
 
 public class Bus {
 
-    private String number = null;
-    private String time = null;
+    private String number;
+    private String time;
 
     public void setNumber( String number ) { this.number = number; }
     public String getNumber() { return number; }
