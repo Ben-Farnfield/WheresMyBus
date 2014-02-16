@@ -33,7 +33,7 @@ public class BusTimeParser {
             }
         }
         if ( bus.getNumber() == null || bus.getTime() == null ) {
-            Logger.log(TAG, "bus times not found.");
+            Logger.log( TAG, "bus times not found." );
             throw new IOException();
         }
         return bus;
