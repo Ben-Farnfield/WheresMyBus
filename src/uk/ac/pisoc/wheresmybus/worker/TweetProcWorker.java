@@ -1,7 +1,6 @@
 package uk.ac.pisoc.wheresmybus.worker;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -76,41 +75,29 @@ public class TweetProcWorker extends Worker {
 
         for ( ;; ) {
             try {
-                Logger.log( TAG, getName() + " is waiting for job." );
-
+                Logger.log( TAG, getName() + " ready for job." );
                 HashtagTweet tweet = bq.take();
-
-                Logger.log( TAG, getName() + " has started job ..." );
+                Logger.log( TAG, getName() + " started job." );
 
                 String atcocode = findBusStop( tweet );
-                if ( atcocode == null ) {
-                    throw new Exception(
-                            "No bus stop found for " + tweet.getUserName() );
-                }
-                Logger.log( TAG, getName() + " found local bus stop." );
+                Logger.log( TAG, getName() + " found closest bus stop to "
+                                           + tweet.getUserName() );
 
                 Bus bus = findNextBus( tweet, atcocode );
-                if ( bus == null ) {
-                    throw new Exception(
-                            "No next bus found for " + tweet.getUserName() );
-                }
-                Logger.log( TAG, getName() + " found bus times." );
+                Logger.log( TAG, getName() + " found bus times for "
+                                           + tweet.getUserName() );
 
                 sendUpdate( tweet, bus );
-
-            } catch ( InterruptedException e ) {} // do nothing
-//            } catch ( Exception e ) {
-//                e.printStackTrace();
-//                System.err.println( e.getMessage() );
-//            }
+                Logger.log( TAG, getName() + " sent message to "
+                                           + tweet.getUserName() );
+            } catch ( IOException e ) {
+                // TODO send apology tweet to user.
+            } catch ( InterruptedException e ) {}
         }
     }
 
     /* finds the users closest bus stop */
     private String findBusStop( HashtagTweet tweet ) throws IOException {
-
-        Logger.log( TAG, getName()
-                + " finding bus stop for " + tweet.getUserName() );
 
         String busStopParams = String.format( busStopParamsFS,
                 URLEncoder.encode( tweet.getLat(), "UTF-8" ),
@@ -123,33 +110,32 @@ public class TweetProcWorker extends Worker {
     }
 
     /* finds the next bus for the given bus stop */
-    private Bus findNextBus( HashtagTweet tweet, String atcocode ) throws IOException {
-        Logger.log( TAG, getName()
-                + " finding bus times for " + tweet.getUserName() );
+    private Bus findNextBus( HashtagTweet tweet, String atcocode )
+            throws IOException {
 
         String busTimesURL = String.format( busTimesFS,
                 URLEncoder.encode( atcocode, "UTF-8" ));
 
-        HttpURLConnection connection = stride.getHttpURLConnection( busTimesURL );
+        HttpURLConnection connection =
+                stride.getHttpURLConnection( busTimesURL );
 
         return busTimeParser.parse( connection.getInputStream() );
     }
 
     /* sends an @reply to the user */
-    private void sendUpdate( HashtagTweet tweet, Bus bus ) {
+    private void sendUpdate( HashtagTweet tweet, Bus bus ) throws IOException {
+
         String message = String.format( tweetFS, tweet.getUserName(),
-                                                 bus.getNumber(),
-                                                 bus.getTime(),
-                                                 df.format( new Date() ));
+                bus.getNumber(), bus.getTime(), df.format( new Date() ));
 
         StatusUpdate statusUpdate = new StatusUpdate( message );
         statusUpdate.setInReplyToStatusId( tweet.getReplyToStatusId() );
+
         try {
             twitter.updateStatus( statusUpdate );
-            Logger.log( TAG, "message sent to " + tweet.getUserName() );
         } catch ( TwitterException e ) {
-            e.printStackTrace();
-            Logger.log( TAG, "Update failed: " + e.getMessage() );
+            Logger.log( TAG, "status update failed: " + e.getMessage() );
+            throw new IOException();
         }
     }
 }
