@@ -89,6 +89,7 @@ public class TweetProcWorker extends Worker {
                 sendUpdate( tweet, bus );
                 Logger.log( TAG, getName() + " sent message to "
                                            + tweet.getUserName() );
+
             } catch ( IOException | JsonParseException | TwitterException e ) {
                 Logger.log( TAG, e.getMessage() );
                 // TODO send apology tweet to user.
