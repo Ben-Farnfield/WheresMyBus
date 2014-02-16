@@ -88,7 +88,7 @@ public class TweetProcWorker extends Worker {
                 sendUpdate( tweet, bus );
                 Logger.log( TAG, getName() + " sent message to "
                                            + tweet.getUserName() );
-            } catch ( IOException | JsonParseException e ) {
+            } catch ( IOException | JsonParseException | TwitterException e ) {
                 Logger.log( TAG, e.getMessage() );
                 // TODO send apology tweet to user.
             } catch ( InterruptedException e ) {}
@@ -123,19 +123,14 @@ public class TweetProcWorker extends Worker {
     }
 
     /* sends an @reply to the user */
-    private void sendUpdate( HashtagTweet tweet, Bus bus ) throws IOException {
+    private void sendUpdate( HashtagTweet tweet, Bus bus )
+            throws TwitterException {
 
         String message = String.format( tweetFS, tweet.getUserName(),
                 bus.getNumber(), bus.getTime(), df.format( new Date() ));
 
         StatusUpdate statusUpdate = new StatusUpdate( message );
         statusUpdate.setInReplyToStatusId( tweet.getReplyToStatusId() );
-
-        try {
-            twitter.updateStatus( statusUpdate );
-        } catch ( TwitterException e ) {
-            Logger.log( TAG, "status update failed: " + e.getMessage() );
-            throw new IOException();
-        }
+        twitter.updateStatus( statusUpdate );
     }
 }

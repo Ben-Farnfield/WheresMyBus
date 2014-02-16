@@ -20,7 +20,6 @@ public class StrideJsonParser {
      * @param in
      * @return
      * @throws JsonParseException
-     * @throws IOException
      */
     public String parseAtcocode( InputStream in ) throws JsonParseException {
 
@@ -54,7 +53,6 @@ public class StrideJsonParser {
      * @param in
      * @return
      * @throws JsonParseException
-     * @throws IOException
      */
     public Bus parseBusTimes( InputStream in ) throws JsonParseException {
 
