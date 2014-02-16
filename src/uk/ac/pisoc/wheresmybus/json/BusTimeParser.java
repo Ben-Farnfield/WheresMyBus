@@ -7,7 +7,6 @@ import uk.ac.pisoc.wheresmybus.logger.Logger;
 import uk.ac.pisoc.wheresmybus.model.Bus;
 
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
