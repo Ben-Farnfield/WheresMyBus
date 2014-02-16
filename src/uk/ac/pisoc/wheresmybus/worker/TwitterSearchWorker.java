@@ -13,71 +13,69 @@ import uk.ac.pisoc.wheresmybus.logger.Logger;
 import uk.ac.pisoc.wheresmybus.model.HashtagTweet;
 
 public class TwitterSearchWorker extends Worker {
-	
+
 	private static final String TAG = "TwitterSearchWorker";
 
 	private final int CACHE_SIZE = 300;
 	private StatusIdCache statusIdCache = new StatusIdCache( CACHE_SIZE );
-	
+
 	private Query twitterQuery;
 	private QueryResult queryResult;
-		
+
 	public TwitterSearchWorker( BlockingQueue<HashtagTweet> bq,
 			                    Twitter twitter,
 			                    String threadName, 
 			                    String query )
-	{	
+	{
 		super( bq, twitter, threadName );
 		twitterQuery = new Query( query );
 		twitterQuery.setCount( 100 ); // max number of results
 	}
-	
+
 	@Override
-	public void run() {
-		super.run();
-
-		primeCache();
-
-		for (;;) {
+	public void run( ) {
+		super.run( );
+		
+		primeCache( );
+		
+		for ( ;; ) {
 			Logger.log( TAG, "searching twitter ..." );
-			
 			try {
-				List<Status> tweets = search();
-				
+				List<Status> tweets = search( );
+
 				for ( Status tweet : tweets ) {
-					if ( tweet.getGeoLocation() != null &&
-						 !statusIdCache.contains( tweet.getId() )) {
-						
-						Logger.log( TAG, "found tweet from: @" 
-				                + tweet.getUser().getScreenName() );
-						
-						statusIdCache.add( tweet.getId() );
-						bq.put( new HashtagTweet(tweet) );
+					if ( tweet.getGeoLocation( ) != null
+				         && !statusIdCache.contains( tweet.getId( ) )) {
+
+						Logger.log( TAG, "found tweet from: @"
+								+ tweet.getUser( ).getScreenName( ) );
+
+						statusIdCache.add( tweet.getId( ) );
+						bq.put( new HashtagTweet( tweet ));
 					}
 				}
-				sleep(8000l); // Wait 8 seconds
-			} 
-			catch ( InterruptedException e ) {}
+				sleep( 8000l ); // Wait 8 seconds
+			} catch ( InterruptedException e ) { }
 		}
 	}
 
-	private void primeCache() {
-		List<Status> tweets = search();
+	private void primeCache( ) {
+		List<Status> tweets = search( );
 		for ( Status tweet : tweets ) {
-			if (tweet.getGeoLocation() != null) {
-				statusIdCache.add( tweet.getId() );
+			if ( tweet.getGeoLocation( ) != null ) {
+				statusIdCache.add( tweet.getId( ) );
 			}
 		}
 		Logger.log( TAG, "cache primed with old tweets." );
 	}
-	
-	private List<Status> search() {
+
+	private List<Status> search( ) {
 		try {
 			queryResult = twitter.search( twitterQuery );
 		} catch ( TwitterException e ) {
-			e.printStackTrace();
-			Logger.log( TAG, "search failed : " + e.getMessage() );
+			e.printStackTrace( );
+			Logger.log( TAG, "search failed : " + e.getMessage( ) );
 		}
-		return queryResult.getTweets();
+		return queryResult.getTweets( );
 	}
 }

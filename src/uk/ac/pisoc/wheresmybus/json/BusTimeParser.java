@@ -12,14 +12,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 public class BusTimeParser {
-	
+
 	private static final String TAG = "BusAndStop";
 
-    public Bus parse(InputStream in) throws IOException {
+	public Bus parse(InputStream in) throws IOException {
 
 		JsonFactory jf = new JsonFactory();
 		JsonParser jp = jf.createParser(in);
-		
+
 		while (jp.nextToken() != JsonToken.END_OBJECT) {
 			String fieldName = jp.getCurrentName();
 			if ("line".equalsIgnoreCase(fieldName)) {
@@ -33,9 +33,9 @@ public class BusTimeParser {
 		}
 		return null;
 	}
-	
-	private static String getTime(JsonParser jp) 
-			throws JsonParseException, IOException {
+
+	private static String getTime(JsonParser jp) throws JsonParseException,
+			IOException {
 		while (jp.nextToken() != JsonToken.END_OBJECT) {
 			String fieldName = jp.getCurrentName();
 			if ("aimed_departure_time".equalsIgnoreCase(fieldName)) {
