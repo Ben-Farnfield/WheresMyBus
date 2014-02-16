@@ -36,7 +36,7 @@ public class StrideConnection {
             throws MalformedURLException, IOException {
 
         HttpURLConnection connection = ( HttpURLConnection )
-                new URL( strideURL ).openConnection( );
+                new URL( strideURL ).openConnection();
 
         return configConnection( connection );
     }
@@ -55,7 +55,7 @@ public class StrideConnection {
             String strideParams ) throws MalformedURLException, IOException {
 
         HttpURLConnection connection = ( HttpURLConnection )
-                new URL( strideURL + "?" + strideParams ).openConnection( );
+                new URL( strideURL + "?" + strideParams ).openConnection();
 
         return configConnection( connection );
     }
@@ -74,7 +74,7 @@ public class StrideConnection {
     /* Base64 encode authorisation string "userName:PASSWORD" */
     private String getEncodedAuthString( String username ) {
         String authString = username + ":" + PASSWORD;
-        byte[] authStringBytes = Base64.encodeBase64( authString.getBytes( ));
+        byte[] authStringBytes = Base64.encodeBase64( authString.getBytes() );
         return new String( authStringBytes );
     }
 }
