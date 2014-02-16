@@ -14,6 +14,7 @@ import twitter4j.TwitterException;
 import uk.ac.pisoc.stride.Stride;
 import uk.ac.pisoc.wheresmybus.json.AtcocodeParser;
 import uk.ac.pisoc.wheresmybus.json.BusTimeParser;
+import uk.ac.pisoc.wheresmybus.json.JsonParseException;
 import uk.ac.pisoc.wheresmybus.logger.Logger;
 import uk.ac.pisoc.wheresmybus.model.Bus;
 import uk.ac.pisoc.wheresmybus.model.HashtagTweet;
@@ -90,14 +91,16 @@ public class TweetProcWorker extends Worker {
                 sendUpdate( tweet, bus );
                 Logger.log( TAG, getName() + " sent message to "
                                            + tweet.getUserName() );
-            } catch ( IOException e ) {
+            } catch ( IOException | JsonParseException e ) {
+                Logger.log( TAG, e.getMessage() );
                 // TODO send apology tweet to user.
             } catch ( InterruptedException e ) {}
         }
     }
 
     /* finds the users closest bus stop */
-    private String findBusStop( HashtagTweet tweet ) throws IOException {
+    private String findBusStop( HashtagTweet tweet )
+            throws JsonParseException, IOException {
 
         String busStopParams = String.format( busStopParamsFS,
                 URLEncoder.encode( tweet.getLat(), "UTF-8" ),
@@ -111,7 +114,7 @@ public class TweetProcWorker extends Worker {
 
     /* finds the next bus for the given bus stop */
     private Bus findNextBus( HashtagTweet tweet, String atcocode )
-            throws IOException {
+            throws JsonParseException, IOException {
 
         String busTimesURL = String.format( busTimesFS,
                 URLEncoder.encode( atcocode, "UTF-8" ));

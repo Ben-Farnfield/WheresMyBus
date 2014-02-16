@@ -3,8 +3,6 @@ package uk.ac.pisoc.wheresmybus.json;
 import java.io.IOException;
 import java.io.InputStream;
 
-import uk.ac.pisoc.wheresmybus.logger.Logger;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -15,7 +13,8 @@ public class AtcocodeParser {
 
     private JsonFactory jsonFactory = new JsonFactory();
 
-    public String parse( InputStream in ) throws IOException {
+    public String parse( InputStream in )
+            throws JsonParseException, IOException {
 
         JsonParser jp = null;
 
@@ -30,8 +29,7 @@ public class AtcocodeParser {
                 }
             }
 
-            Logger.log( TAG, "no atcocode found." );
-            throw new IOException();
+            throw new JsonParseException( TAG, "no atcocode found." );
 
         } finally {
             if ( jp != null ) jp.close();
